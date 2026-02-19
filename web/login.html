@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - Web2APK</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-effects">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="card login-card">
+            <div class="card-content" style="padding: 2.5rem;">
+                <div class="login-header" style="text-align: center; margin-bottom: 2rem;">
+                    <div class="logo-icon" style="margin: 0 auto 1.5rem; width: 64px; height: 64px; font-size: 2rem;">
+                        <i class="ri-android-fill"></i>
+                    </div>
+                    <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Selamat Datang Kembali</h1>
+                    <p style="color: var(--text-secondary);">Masuk untuk mengakses dashboard Web2APK</p>
+                </div>
+
+                <div class="login-error" id="loginError"
+                    style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; align-items: center; gap: 0.8rem;">
+                    <i class="ri-error-warning-fill" style="color: var(--error); font-size: 1.2rem;"></i>
+                    <span id="errorText" style="color: var(--error); font-size: 0.9rem;">Username atau License Key
+                        salah</span>
+                </div>
+
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="username">
+                            <i class="ri-user-line"></i> Username
+                        </label>
+                        <input type="text" id="username" name="username" placeholder="Masukkan username Anda" required
+                            autocomplete="username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="licenseKey">
+                            <i class="ri-key-line"></i> License Key
+                        </label>
+                        <input type="password" id="licenseKey" name="licenseKey" placeholder="Masukkan license key Anda"
+                            required autocomplete="current-password">
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="loginBtn" style="margin-top: 2rem;">
+                        <i class="ri-login-box-line"></i>
+                        <span>Masuk Sekarang</span>
+                    </button>
+                </form>
+
+                <div class="login-footer"
+                    style="text-align: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">
+                        <i class="ri-information-line" style="vertical-align: middle;"></i>
+                        Belum punya akun? Hubungi <a href="https://t.me/ItsNixcaL" target="_blank"
+                            style="color: var(--primary); text-decoration: none; font-weight: 500;">@ItsNixcaL</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate unique device ID for browser
+        function getDeviceId() {
+            let deviceId = localStorage.getItem('web2apk_device_id');
+            if (!deviceId) {
+                // Create fingerprint from browser properties
+                const nav = window.navigator;
+                const screen = window.screen;
+                const fingerprint = [
+                    nav.userAgent,
+                    nav.language,
+                    screen.colorDepth,
+                    screen.width + 'x' + screen.height,
+                    new Date().getTimezoneOffset(),
+                    nav.hardwareConcurrency || 'unknown',
+                    nav.platform
+                ].join('|');
+
+                // Simple hash
+                let hash = 0;
+                for (let i = 0; i < fingerprint.length; i++) {
+                    const char = fingerprint.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash;
+                }
+
+                deviceId = 'web-' + Math.abs(hash).toString(36) + '-' + Date.now().toString(36);
+                localStorage.setItem('web2apk_device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        // Check if already logged in
+        function checkExistingSession() {
+            const session = localStorage.getItem('web2apk_session');
+            if (session) {
+                try {
+                    const data = JSON.parse(session);
+                    // Check if session expired
+                    if (new Date(data.expiresAt) > new Date()) {
+                        window.location.href = 'index.html';
+                        return;
+                    }
+                } catch (e) {
+                    localStorage.removeItem('web2apk_session');
+                }
+            }
+        }
+
+        // Run on page load
+        checkExistingSession();
+
+        // Form submit
+        const form = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginError = document.getElementById('loginError');
+        const errorText = document.getElementById('errorText');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const licenseKey = document.getElementById('licenseKey').value.trim();
+
+            if (!username || !licenseKey) {
+                showError('Mohon isi semua field');
+                return;
+            }
+
+            // Show loading
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<div class="spinner" style="width: 18px; height: 18px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div><span>Memproses...</span>';
+            loginError.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        key: licenseKey,
+                        deviceId: getDeviceId()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Save session to localStorage
+                    localStorage.setItem('web2apk_session', JSON.stringify({
+                        username: data.username,
+                        expiresAt: data.expiresAt,
+                        deviceId: getDeviceId()
+                    }));
+
+                    // Redirect to dashboard
+                    window.location.href = 'index.html';
+                } else {
+                    showError(data.error || 'Login gagal');
+                }
+            } catch (err) {
+                console.error('Login error:', err);
+                showError('Tidak dapat terhubung ke server');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="ri-login-box-line"></i><span>Masuk Sekarang</span>';
+            }
+        });
+
+        function showError(message) {
+            errorText.textContent = message;
+            loginError.style.display = 'flex';
+        }
+    </script>
+</body>
+
+</html>

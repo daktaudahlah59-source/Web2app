@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web2APK Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-effects">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="ri-android-fill"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Web2APK</h1>
+                    <span>Konverter Website ke Android</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span class="user-display" id="userDisplay" style="display: none;">
+                    <i class="ri-user-3-fill"></i>
+                    <span id="loggedInUser">User</span>
+                </span>
+                <button class="btn-icon" id="refreshBtn" title="Segarkan">
+                    <i class="ri-refresh-line"></i>
+                </button>
+                <button class="btn-icon" id="logoutBtn" title="Keluar" onclick="logout()"
+                    style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+                    <i class="ri-logout-box-line"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Server Status Card -->
+            <div class="card server-card">
+                <div class="card-header">
+                    <i class="ri-server-line"></i>
+                    <h2>Status Server</h2>
+                    <div class="status-badge" id="serverStatus">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Online</span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="ri-user-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="totalUsers">-</span>
+                                <span class="stat-label">Total Pengguna</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="ri-time-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="uptime">-</span>
+                                <span class="stat-label">Waktu Aktif</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="ri-stack-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="queueStatus">-</span>
+                                <span class="stat-label">Antrian</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon"><i class="ri-terminal-line"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="activeSessions">-</span>
+                                <span class="stat-label">Sesi Aktif</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Specs Card -->
+            <div class="card specs-card">
+                <div class="card-header">
+                    <i class="ri-cpu-line"></i>
+                    <h2>Spesifikasi Sistem</h2>
+                </div>
+                <div class="card-content">
+                    <div class="specs-list">
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="ri-computer-line"></i></div>
+                            <div class="spec-info">
+                                <span class="spec-label">Sistem Operasi</span>
+                                <span class="spec-value" id="osInfo">Memuat...</span>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="ri-cpu-line"></i></div>
+                            <div class="spec-info">
+                                <span class="spec-label">CPU</span>
+                                <span class="spec-value" id="cpuInfo">Memuat...</span>
+                            </div>
+                        </div>
+                        <div class="spec-item" style="flex-direction: column; align-items: flex-start;">
+                            <div
+                                style="display: flex; align-items: center; gap: 1rem; width: 100%; margin-bottom: 0.5rem;">
+                                <div class="spec-icon"><i class="ri-ram-line"></i></div>
+                                <div class="spec-info">
+                                    <span class="spec-label">Memori</span>
+                                    <span class="spec-value" id="memInfo">Memuat...</span>
+                                </div>
+                            </div>
+                            <!-- Memory Bar -->
+                            <div
+                                style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                                <div id="memoryBar"
+                                    style="width: 0%; height: 100%; background: var(--gradient-main); transition: width 0.5s;">
+                                </div>
+                            </div>
+                            <small id="memoryText"
+                                style="color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; align-self: flex-end;">0%
+                                terpakai</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Build Mode Tabs -->
+            <div class="build-tabs">
+                <button class="tab-btn active" data-tab="url">
+                    <i class="ri-link"></i>
+                    <span>Build APK (URL)</span>
+                </button>
+                <button class="tab-btn" data-tab="zip">
+                    <i class="ri-folder-zip-line"></i>
+                    <span>Build Project (ZIP)</span>
+                </button>
+            </div>
+
+            <!-- Build APK Card -->
+            <div class="card build-card" id="urlBuildCard">
+                <div class="card-header">
+                    <i class="ri-smartphone-line"></i>
+                    <h2>Buat APK dari URL</h2>
+                </div>
+                <div class="card-content">
+                    <form id="buildForm">
+                        <div class="form-group">
+                            <label for="urlInput">
+                                <i class="ri-link"></i> URL Website
+                            </label>
+                            <input type="url" id="urlInput" placeholder="https://contoh.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appNameInput">
+                                <i class="ri-edit-line"></i> Nama Aplikasi
+                            </label>
+                            <input type="text" id="appNameInput" placeholder="Aplikasi Saya" maxlength="30" required>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="ri-image-line"></i> Ikon Aplikasi <span
+                                    style="font-size: 0.8rem; opacity: 0.7; font-weight: normal; margin-left: 5px;">(Opsional)</span>
+                            </label>
+                            <div class="icon-upload-zone" id="iconUploadZone">
+                                <input type="file" id="iconInput" accept="image/png,image/jpeg,image/jpg" hidden>
+                                <div class="upload-placeholder" id="uploadPlaceholder">
+                                    <i class="ri-upload-cloud-line"
+                                        style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                                    <span>Klik atau tarik gambar ke sini</span>
+                                    <small
+                                        style="display: block; margin-top: 0.5rem; color: var(--text-muted);">PNG/JPG,
+                                        disarankan 512x512px</small>
+                                </div>
+                                <div class="upload-preview hidden" id="uploadPreview" style="position: relative;">
+                                    <img src="" alt="Icon Preview" id="iconPreviewImg"
+                                        style="max-width: 100px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                                    <button type="button" class="remove-icon" id="removeIconBtn"
+                                        style="position: absolute; top: -10px; right: 50%; transform: translateX(50px); background: var(--error); border: none; color: white; border-radius: 50%; width: 24px; height: 24px; cursor: pointer;">
+                                        <i class="ri-close-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary" id="buildBtn">
+                            <i class="ri-hammer-line"></i>
+                            <span>Mulai Build APK</span>
+                        </button>
+                    </form>
+
+                    <!-- Build Progress -->
+                    <div class="build-progress hidden" id="buildProgress">
+                        <div class="progress-header"
+                            style="display: flex; justify-content: space-between; margin-top: 2rem; margin-bottom: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <div class="spinner"
+                                    style="width: 16px; height: 16px; border: 2px solid var(--primary); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;">
+                                </div>
+                                <span id="progressText">Sedang memproses...</span>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Build Result -->
+                    <div class="build-result hidden" id="buildResult"
+                        style="margin-top: 2rem; text-align: center; background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.2);">
+                        <div class="result-success">
+                            <i class="ri-checkbox-circle-fill"
+                                style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
+                            <h3 style="margin-bottom: 0.5rem;">Build Berhasil!</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">APK Anda siap diunduh. Klik
+                                tombol di bawah ini.</p>
+                            <a href="#" class="btn-primary" id="downloadBtn" target="_blank" rel="noopener"
+                                style="background: var(--success); max-width: 250px; margin: 0 auto;">
+                                <i class="ri-download-cloud-2-line"></i>
+                                Unduh APK
+                            </a>
+                            <p class="expire-notice"
+                                style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                                <i class="ri-timer-flash-line"></i>
+                                <strong>Tautan kadaluarsa dalam <span id="expireTime">60</span> detik</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Build Error -->
+                    <div class="build-error hidden" id="buildError"
+                        style="margin-top: 2rem; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid rgba(239, 68, 68, 0.2);">
+                        <div class="error-content">
+                            <i class="ri-error-warning-fill"
+                                style="font-size: 3rem; color: var(--error); margin-bottom: 1rem;"></i>
+                            <h3 style="margin-bottom: 0.5rem; color: var(--error);">Build Gagal</h3>
+                            <p id="errorMessage" style="color: var(--text-primary); margin-bottom: 1.5rem;">Terjadi
+                                kesalahan</p>
+                            <button class="btn-primary" id="retryBtn"
+                                style="background: rgba(255,255,255,0.1); max-width: 200px; margin: 0 auto; border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="ri-restart-line"></i>
+                                Coba Lagi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ZIP Build Card -->
+            <div class="card zip-build-card hidden" id="zipBuildCard">
+                <div class="card-header">
+                    <i class="ri-folder-zip-line"></i>
+                    <h2>Build dari Project ZIP</h2>
+                </div>
+                <div class="card-content">
+                    <form id="zipBuildForm">
+                        <div class="form-group">
+                            <label>
+                                <i class="ri-code-box-line"></i> Tipe Project
+                            </label>
+                            <div class="project-type-picker" style="display: flex; gap: 1rem;">
+                                <button type="button" class="tab-btn type-btn active" data-type="flutter"
+                                    style="flex: 1; justify-content: center;">
+                                    <i class="ri-flutter-fill"></i>
+                                    <span>Flutter</span>
+                                </button>
+                                <button type="button" class="tab-btn type-btn" data-type="android"
+                                    style="flex: 1; justify-content: center;">
+                                    <i class="ri-android-fill"></i>
+                                    <span>Android Studio</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="ri-bug-line"></i> Tipe Build
+                            </label>
+                            <div class="build-type-picker" style="display: flex; gap: 1rem;">
+                                <button type="button" class="tab-btn build-type-btn" data-build="debug"
+                                    style="flex: 1; justify-content: center;">
+                                    <i class="ri-bug-line"></i>
+                                    <span>Debug (Cepat)</span>
+                                </button>
+                                <button type="button" class="tab-btn build-type-btn active" data-build="release"
+                                    style="flex: 1; justify-content: center;">
+                                    <i class="ri-rocket-line"></i>
+                                    <span>Release</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <i class="ri-file-zip-line"></i> File ZIP Project
+                            </label>
+                            <div class="zip-upload-zone" id="zipUploadZone">
+                                <input type="file" id="zipInput" accept=".zip" hidden>
+                                <div class="upload-placeholder" id="zipPlaceholder">
+                                    <i class="ri-upload-cloud-line"
+                                        style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                                    <span>Klik atau tarik file ZIP ke sini</span>
+                                    <small style="display: block; color: var(--text-muted); margin-top: 0.5rem;">Maks
+                                        2GB. Sertakan folder project lengkap.</small>
+                                </div>
+                                <div class="upload-preview hidden" id="zipPreview"
+                                    style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+                                    <i class="ri-file-zip-fill" style="font-size: 2rem; color: var(--primary);"></i>
+                                    <span id="zipFileName" style="font-weight: 500;">project.zip</span>
+                                    <button type="button" class="remove-icon" id="removeZipBtn"
+                                        style="background: transparent; color: var(--error); border: 1px solid var(--error); border-radius: 50%; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                        <i class="ri-close-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary" id="zipBuildBtn">
+                            <i class="ri-hammer-line"></i>
+                            <span>Mulai Build Project</span>
+                        </button>
+                    </form>
+
+                    <!-- ZIP Build Progress -->
+                    <div class="build-progress hidden" id="zipBuildProgress">
+                        <div class="progress-header"
+                            style="display: flex; gap: 0.5rem; align-items: center; margin-top: 1.5rem; margin-bottom: 0.5rem;">
+                            <div class="spinner"
+                                style="width: 16px; height: 16px; border: 2px solid var(--primary); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;">
+                            </div>
+                            <span id="zipProgressText">Sedang memproses...</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="zipProgressFill"></div>
+                        </div>
+                    </div>
+
+                    <!-- ZIP Build Result -->
+                    <div class="build-result hidden" id="zipBuildResult"
+                        style="margin-top: 2rem; text-align: center; background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid rgba(16, 185, 129, 0.2);">
+                        <div class="result-success">
+                            <i class="ri-checkbox-circle-fill"
+                                style="font-size: 3rem; color: var(--success); margin-bottom: 1rem;"></i>
+                            <h3>Build Berhasil!</h3>
+                            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">APK Anda siap diunduh.</p>
+                            <a href="#" class="btn-primary" id="zipDownloadBtn" target="_blank" rel="noopener"
+                                style="background: var(--success); max-width: 250px; margin: 0 auto;">
+                                <i class="ri-download-cloud-2-line"></i>
+                                Unduh APK
+                            </a>
+                            <p class="expire-notice"
+                                style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                                <i class="ri-timer-flash-line"></i>
+                                <strong>Link kadaluarsa dalam <span id="zipExpireTime">60</span> detik</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- ZIP Build Error -->
+                    <div class="build-error hidden" id="zipBuildError"
+                        style="margin-top: 2rem; text-align: center; background: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid rgba(239, 68, 68, 0.2);">
+                        <div class="error-content">
+                            <i class="ri-error-warning-fill"
+                                style="font-size: 3rem; color: var(--error); margin-bottom: 1rem;"></i>
+                            <h3 style="color: var(--error);">Build Gagal</h3>
+                            <p id="zipErrorMessage">Terjadi kesalahan</p>
+                            <button class="btn-primary" id="zipRetryBtn"
+                                style="background: rgba(255,255,255,0.1); max-width: 200px; margin: 1rem auto 0; border: 1px solid rgba(255,255,255,0.2);">
+                                <i class="ri-restart-line"></i>
+                                Coba Lagi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Build Logs Card -->
+            <div class="card logs-card">
+                <div class="card-header" id="logsToggle" style="cursor: pointer; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="ri-file-list-3-line"></i>
+                        <h2>Log Build</h2>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <button class="btn-icon" id="logsRefreshBtn" title="Refresh Log">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                        <button class="btn-icon" id="logsClearBtn" title="Hapus Log">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                        <i class="ri-arrow-down-s-line toggle-icon" id="logsToggleIcon"
+                            style="font-size: 1.5rem; color: var(--text-secondary);"></i>
+                    </div>
+                </div>
+                <div class="card-content logs-content" id="logsContent">
+                    <div class="logs-container" id="logsContainer">
+                        <div class="log-empty" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                            <i class="ri-inbox-line"
+                                style="font-size: 2rem; display: block; margin-bottom: 0.5rem;"></i>
+                            <span>Belum ada log build</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer"
+            style="text-align: center; margin-top: 3rem; padding-bottom: 2rem; color: var(--text-muted); font-size: 0.9rem;">
+            <p>
+                <i class="ri-code-s-slash-line"></i>
+                Powered by Web2APK Bot
+                <span class="separator" style="margin: 0 0.5rem;">•</span>
+                <a href="https://t.me/ItsNixcaL" target="_blank" style="color: var(--primary); text-decoration: none;">
+                    <i class="ri-telegram-fill"></i> @ItsNixcaL
+                </a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Spinner Animation Keyframes -->
+    <style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <script src="js/app.js?v=5"></script>
+</body>
+
+</html>
