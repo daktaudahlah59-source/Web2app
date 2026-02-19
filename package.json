@@ -1,0 +1,36 @@
+{
+  "name": "web2apk-telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram Bot untuk konversi website menjadi Android APK",
+  "main": "src/bot.js",
+  "scripts": {
+    "start": "node src/bot.js",
+    "dev": "node --watch src/bot.js",
+    "check": "node scripts/check-system.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "web2apk",
+    "android",
+    "apk",
+    "converter"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "archiver": "^7.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^5.2.1",
+    "fs-extra": "^11.2.0",
+    "jimp": "^0.22.12",
+    "multer": "^2.0.2",
+    "node-telegram-bot-api": "^0.64.0",
+    "uuid": "^9.0.1"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.33.1"
+  }
+}
