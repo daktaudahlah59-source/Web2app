@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fitsSystemWindows="true" android:background="?android:attr/colorBackground" android:gravity="center">
+
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerInParent="true" android:gravity="center" android:orientation="vertical" android:padding="32dp">
+
+        <!-- App Logo with glow effect container -->
+        <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+            <ImageView android:id="@+id/splashLogo" android:layout_width="140dp" android:layout_height="140dp" android:src="@mipmap/ic_launcher" android:contentDescription="@string/app_name" android:padding="8dp" />
+        </FrameLayout>
+
+        <!-- App Name -->
+        <TextView android:id="@+id/splashAppName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="28dp" android:text="@string/app_name" android:textColor="?android:attr/textColorPrimary" android:textSize="30sp" android:textStyle="bold" android:letterSpacing="0.05" />
+
+        <!-- Modern Loading Spinner -->
+        <ProgressBar android:id="@+id/splashProgress" style="?android:attr/progressBarStyle" android:layout_width="42dp" android:layout_height="42dp" android:layout_marginTop="48dp" android:indeterminate="true" android:indeterminateTint="@color/colorAccent" />
+
+        <!-- Loading Text -->
+        <TextView android:id="@+id/splashLoadingText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="@string/loading" android:textColor="?android:attr/textColorSecondary" android:textSize="14sp" android:letterSpacing="0.1" />
+
+    </LinearLayout>
+
+    <!-- Version info at bottom -->
+    <TextView android:id="@+id/splashVersion" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentBottom="true" android:layout_centerHorizontal="true" android:layout_marginBottom="32dp" android:text="Powered by Web2APK" android:textColor="?android:attr/textColorSecondary" android:textSize="12sp" android:alpha="0.6" />
+
+</RelativeLayout>
+

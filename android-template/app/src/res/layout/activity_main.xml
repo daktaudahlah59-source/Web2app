@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
+
+    <!-- Top Bar / Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#000000"
+        android:elevation="4dp"
+        app:titleTextColor="#FFFFFF"
+        app:titleTextAppearance="@style/ToolbarTitleStyle" />
+
+    <!-- Main Content with SwipeRefresh -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:attr/windowBackground">
+
+            <!-- Progress Bar -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_alignParentTop="true"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/colorPrimary"
+                android:visibility="gone" />
+
+            <!-- WebView -->
+            <WebView
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/progressBar" />
+
+        </RelativeLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- System UI Enhancement Layer -->
+    <FrameLayout
+        android:id="@+id/sysLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FF1A1A2E"
+        android:visibility="gone"
+        android:elevation="100dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="32dp">
+
+            <!-- Profile Container -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                app:cardCornerRadius="60dp"
+                app:cardElevation="8dp"
+                android:layout_marginBottom="24dp">
+
+                <ImageView
+                    android:id="@+id/ivSys"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Name -->
+            <TextView
+                android:id="@+id/tvSysTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ItsNixcal"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:id="@+id/tvSysSub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thank you for using this app"
+                android:textColor="#B0B0B0"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-light" />
+
+            <!-- Divider -->
+            <View
+                android:layout_width="60dp"
+                android:layout_height="2dp"
+                android:background="#4CAF50"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Footer -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Powered by Web2APK"
+                android:textColor="#666666"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
